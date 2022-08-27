@@ -1,0 +1,68 @@
+/// Expect:
+/// - output: ""
+
+// Copyright (c) 2022, Andrew Kaster <akaster@serenityos.org>
+//
+// SPDX-License-Identifier: BSD-2-Clause
+
+import utility { write_to_file }
+
+struct Project
+{
+    name: String
+
+    function populate(this) throws {
+        let current_directory = File::current_directory()
+        let project_directory = current_directory + "/" + .name
+
+        println("Creating jakt project in {}..", project_directory)
+        File::make_directory(project_directory)
+        File::make_directory(project_directory + "/src")
+
+        print("\tGenerating CMakeLists.txt...")
+        .create_template_cmake_lists(project_directory)
+        println(" done")
+        print("\tGenerating jakt source code...")
+        .create_sample_jakt_files(project_directory)
+        println(" done")
+
+        println("Done!")
+    }
+
+    function create_template_cmake_lists(this, project_directory : String) throws {
+        // FIXME: WTB Format impl in jakt
+        let cml_contents = "cmake_minimum_required(VERSION 3.20)
+project(" + .name + "
+   VERSION 1.0.0
+   LANGUAGES CXX
+)
+
+find_package(Jakt REQUIRED)
+
+add_jakt_executable(" + .name + "
+   MAIN_SOURCE src/main.jakt
+   MODULE_SOURCES
+     src/SecondModule.jakt
+)
+"
+
+        write_to_file(data: cml_contents, output_filename: project_directory + "/CMakeLists.txt")
+    }
+
+    function create_sample_jakt_files(this, project_directory: String) throws {
+        let main_jakt = "import SecondModule { get_string }
+
+function main() throws -> c_int {
+    println(\"{}!\", get_string())
+}
+"
+
+        let second_module_jakt = "function get_string() throws -> String {
+    return \"Hello, World\"
+}
+"
+
+        write_to_file(data: main_jakt, output_filename: project_directory + "/src/main.jakt")
+        write_to_file(data: second_module_jakt, output_filename: project_directory + "/src/SecondModule.jakt")
+    }
+}

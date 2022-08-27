@@ -26,6 +26,8 @@ public:
     ~File();
 
     static bool exists(String path);
+    static ErrorOr<String> current_directory();
+    static ErrorOr<void> make_directory(String path);
 
 private:
     File();

@@ -9,13 +9,14 @@
 import compiler { Compiler, FileId }
 import codegen { CodeGenerator }
 import error { JaktError, print_error }
-import utility { FilePath, ArgsParser, Span }
+import utility { FilePath, ArgsParser, Span, write_to_file }
 import lexer { Lexer }
 import parser { Parser }
 import interpreter { Interpreter, InterpreterScope, value_to_checked_expression }
 import typechecker { Typechecker }
 import types { FunctionId, ResolvedNamespace, ScopeId, ModuleId, Value, ValueImpl }
 import repl { REPL, serialize_ast_node }
+import project { Project }
 import ide
 
 function usage() => "usage: jakt [-h] [OPTIONS] <filename>"
@@ -54,6 +55,7 @@ function help() -> String {
     output += "  -t,--goto-type-def INDEX\t\tReturn the span for the type definition at index.\n"
     output += "  -e,--hover INDEX\t\t\tReturn the type of element at index.\n"
     output += "  -m,--completions INDEX\t\tReturn dot completions at index.\n"
+    output += "  --create NAME\t\tCreate sample project in $PWD/NAME\n"
     return output
 }
 
@@ -104,6 +106,7 @@ function main(args: [String]) {
     let goto_type_def = args_parser.option(["-t", "--goto-type-def"])
     let hover = args_parser.option(["-e", "--hover"])
     let completions = args_parser.option(["-m", "--completions"])
+    let project_name = args_parser.option(["--create"])
 
     let interpret_run = args_parser.flag(["-r", "--run"])
 
@@ -114,6 +117,12 @@ function main(args: [String]) {
     }
 
     let positional_arguments = args_parser.remaining_arguments()
+
+    if project_name.has_value() {
+        let project = Project(name: project_name!)
+        project.populate()
+        return 0
+    }
 
     mut file_name: String? = None
     mut first_arg = true
@@ -474,13 +483,4 @@ function run_compiler(cxx_compiler_path: String, cpp_filename: String, output_fi
         command += " "
     }
     return system(command.c_string())
-}
-
-function write_to_file(data: String, output_filename: String) throws {
-    mut outfile = File::open_for_writing(output_filename)
-    mut bytes: [u8] = []
-    for i in 0..data.length() {
-        bytes.push(data.byte_at(i))
-    }
-    outfile.write(bytes)
 }

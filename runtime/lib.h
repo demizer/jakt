@@ -413,6 +413,11 @@ using JaktInternal::unchecked_add;
 using JaktInternal::unchecked_mul;
 }
 
+// Looking at you, SDL2 on Windows...
+#ifdef main
+#    error "Jakt does not support integration with native libraries that define main"
+#endif
+
 // We place main in a separate namespace to ensure it has access to the same identifiers as other functions
 namespace Jakt {
 ErrorOr<int> main(Array<String>);

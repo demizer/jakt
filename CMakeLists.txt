@@ -49,6 +49,7 @@ set(SELFHOST_SOURCES
   selfhost/typechecker.jakt
   selfhost/types.jakt
   selfhost/utility.jakt
+  selfhost/project.jakt
 )
 
 add_jakt_executable(jakt_stage1
