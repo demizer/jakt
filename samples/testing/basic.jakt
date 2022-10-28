@@ -1,0 +1,24 @@
+/// Expect:
+/// - output: "PASS\n"
+
+import jakt::testing { Testing }
+
+function TestAssertTrue(test: &mut Testing) {
+    test.assert_true(true == true)
+}
+
+function TestAssertFalse(test: &mut Testing) {
+    test.assert_false(false)
+}
+
+function main() {
+    mut test = Testing(pass_count: 0, fail_count: 0)
+    TestAssertTrue(&mut test)
+    TestAssertFalse(&mut test)
+    if test.fail_count > 0 {
+        println("FAIL")
+        return 1
+    } else if test.pass_count == 2 {
+        println("PASS")
+    }
+}

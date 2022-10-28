@@ -1,0 +1,42 @@
+// Copyright (c) 2022, Jesus Alvarez <jeezusjr@gmail.com>
+//
+// SPDX-License-Identifier: BSD-2-Clause
+
+struct Testing {
+    // funcs: functions
+    pass_count: u16
+    fail_count: u16
+
+    /// Skip a test
+    public function skip(mut this) {
+
+    }
+
+    /// Pass a test
+    public function pass(mut this) {
+
+    }
+
+    /// Fail a test
+    public function fail(mut this) {
+
+    }
+
+    /// Check a condition is equal.
+    public function assert_true(mut this, anon condition: bool) {
+        if condition {
+            .pass_count++
+            return
+        }
+        .fail_count++
+    }
+
+    public function assert_false(mut this, anon condition: bool) {
+        if not condition {
+            .pass_count++
+            return
+        }
+        .fail_count++
+    }
+
+}
