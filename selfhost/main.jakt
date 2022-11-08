@@ -1,4 +1,5 @@
-/// Expect:
+/// Expect: Skip
+
 /// - output: ""
 
 // Copyright (c) 2022, JT <jt@serenityos.org>
